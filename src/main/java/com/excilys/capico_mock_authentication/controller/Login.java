@@ -3,17 +3,14 @@ package com.excilys.capico_mock_authentication.controller;
 import com.excilys.capico_mock_authentication.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -26,7 +23,7 @@ public class Login {
     @Autowired
     private JwtUtil jwtUtil;
 
-    @RequestMapping(value = "/api/login", method=POST)
+    @RequestMapping(value = "/api/login", method = POST)
     public ResponseEntity<?> login(@RequestParam("username") String username, @RequestParam("password") String password) {
         // Verify the user's validity in DB
         try {

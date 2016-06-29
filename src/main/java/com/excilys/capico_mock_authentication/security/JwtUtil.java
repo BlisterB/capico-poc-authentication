@@ -27,6 +27,7 @@ public class JwtUtil {
 
     /**
      * Generates a JWT token containing username as subject, and role and expiration date as additional claims.
+     *
      * @param u the user for which the token will be generated
      * @return the JWT token
      */
@@ -56,7 +57,7 @@ public class JwtUtil {
      * @param token the JWT token to parse
      * @return the User object extracted from specified token or null if a token is invalid.
      */
-    public JwtAuthenticationToken parseToken(String token) throws JwtTokenMalformedException, ExpiredJwtException{
+    public JwtAuthenticationToken parseToken(String token) throws JwtTokenMalformedException, ExpiredJwtException {
         // Parsing : it can throw an expiredJwtException if the token is expired
         Claims body = Jwts.parser()
                 .setSigningKey(secret)
@@ -69,7 +70,7 @@ public class JwtUtil {
             throw new JwtTokenMalformedException("No username found in the JSON Web Token");
         }
 
-        Collection<GrantedAuthority> authorities =  AuthorityUtils.commaSeparatedStringToAuthorityList((String) body.get(TAG_AUTHORITIES));
+        Collection<GrantedAuthority> authorities = AuthorityUtils.commaSeparatedStringToAuthorityList((String) body.get(TAG_AUTHORITIES));
         if (authorities == null || authorities.isEmpty()) {
             throw new JwtTokenMalformedException("No authorities found in the JSON Web Token");
         }
@@ -77,7 +78,9 @@ public class JwtUtil {
         return new JwtAuthenticationToken(username, authorities);
     }
 
-    /** Extract the JSON Web Token from the request packet */
+    /**
+     * Extract the JSON Web Token from the request packet
+     */
     public String extractStringTokenFromRequest(HttpServletRequest request) throws JwtTokenMissingException {
         // Extracts the JWT token from the request headers
         String header = request.getHeader(HEADER_NAME);
