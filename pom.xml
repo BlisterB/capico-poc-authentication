@@ -9,6 +9,16 @@
 
     <build>
         <finalName>mock-authentication</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${jdk.version}</source>
+                    <target>${jdk.version}</target>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 
     <properties>
@@ -16,20 +26,30 @@
         <spring.version>4.2.5.RELEASE</spring.version>
         <spring.security.version>3.2.0.RELEASE</spring.security.version>
         <jstl.version>1.2</jstl.version>
+        <servlet.version>3.1.0</servlet.version>
+        <slf4jVersion>1.7.5</slf4jVersion>
+        <junit.version>3.8.1</junit.version>
+        <logbackVersion>1.0.13</logbackVersion>
+        <jsonwebtoken.version>0.6.0</jsonwebtoken.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>3.8.1</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
-            <version>1.2</version>
+            <version>${jstl.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${servlet.version}</version>
         </dependency>
 
         <!-- Spring dependencies -->
@@ -65,5 +85,20 @@
             <artifactId>spring-security-config</artifactId>
             <version>${spring.security.version}</version>
         </dependency>
+
+        <!-- For JWT Parser. Java library for Javascript Object Signing and Encryption (JOSE) and JSON Web Tokens (JWT) -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>${jsonwebtoken.version}</version>
+        </dependency>
+
+        <!-- Logging -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logbackVersion}</version>
+        </dependency>
+
     </dependencies>
 </project>

@@ -4,6 +4,6 @@
     <title>HTTP Basic</title>
 </head>
 <body>
-    <p>Cette page est protégée par HTTP Basic Authentication</p>
+<p>Cette page est protégée par HTTP Basic Authentication</p>
 </body>
 </html>

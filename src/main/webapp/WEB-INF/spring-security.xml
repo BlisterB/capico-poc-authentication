@@ -5,17 +5,48 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 	   	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
-    <security:http security="none" pattern="/" />
+    <security:http security="none" pattern="/"/>
 
-    <security:http create-session="never">
-        <security:http-basic />
-        <security:intercept-url pattern="/**" access="ROLE_LMS_USER" />
+    <!-- JWT Authentication -->
+    <security:global-method-security pre-post-annotations="enabled"/>
+
+    <security:http pattern="/api/login" security="none"/>
+    <security:http pattern="/api/signup" security="none"/>
+
+    <security:http pattern="/api/**" entry-point-ref="jwtRestAuthenticationEntryPoint" create-session="stateless">
+        <!-- In case of migration to Spring Security 4, we don't need CSRF : <security:csrf disabled="true"/> -->
+        <security:custom-filter before="FORM_LOGIN_FILTER" ref="jwtAuthenticationFilter"/>
     </security:http>
 
-    <security:authentication-manager>
+    <bean id="jwtRestAuthenticationEntryPoint"
+          class="com.excilys.capico_mock_authentication.security.JwtRestAuthenticationEntryPoint"/>
+    <bean id="jwtAuthenticationSuccessHandler"
+          class="com.excilys.capico_mock_authentication.security.JwtAuthenticationSuccessHandler"/>
+    <bean id="jwtAuthenticationFilter"
+          class="com.excilys.capico_mock_authentication.security.JwtAuthenticationFilter">
+        <property name="authenticationManager" ref="authenticationManager"/>
+        <!-- The default success handler is not good because it redirects the user to a success page -->
+        <property name="authenticationSuccessHandler" ref="jwtAuthenticationSuccessHandler"/>
+    </bean>
+
+
+    <!--
+    <security:authentication-manager alias="authenticationManager">
+        <security:authentication-provider ref="jwtAuthenticationProvider" />
+    </security:authentication-manager>
+    -->
+
+    <!-- Other requests are handled by the older HTTP Basic Authentication -->
+    <security:http create-session="never">
+        <security:http-basic/>
+        <security:intercept-url pattern="/**" access="ROLE_LMS_USER"/>
+    </security:http>
+
+    <!-- Authentication manager -->
+    <security:authentication-manager alias="authenticationManager">
         <security:authentication-provider>
             <security:user-service>
-                <security:user name="aze" password="aze" authorities="ROLE_LMS_USER" />
+                <security:user name="aze" password="aze" authorities="ROLE_LMS_USER"/>
             </security:user-service>
         </security:authentication-provider>
     </security:authentication-manager>

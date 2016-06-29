@@ -4,6 +4,6 @@
     <title>Title</title>
 </head>
 <body>
-    <p>Cette page est protégée par Java Web Token</p>
+<p>Cette page est protégée par Java Web Token</p>
 </body>
 </html>
