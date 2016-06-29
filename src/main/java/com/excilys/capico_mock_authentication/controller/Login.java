@@ -27,7 +27,7 @@ public class Login {
     private JwtUtil jwtUtil;
 
     @RequestMapping(value = "/api/login", method=POST)
-    public ResponseEntity<?> indexPage(@RequestParam("username") String username, @RequestParam("password") String password) {
+    public ResponseEntity<?> login(@RequestParam("username") String username, @RequestParam("password") String password) {
         // Verify the user's validity in DB
         try {
             Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
