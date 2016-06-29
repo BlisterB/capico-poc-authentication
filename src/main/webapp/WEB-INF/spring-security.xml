@@ -30,17 +30,12 @@
     </bean>
 
 
-    <!--
-    <security:authentication-manager alias="authenticationManager">
-        <security:authentication-provider ref="jwtAuthenticationProvider" />
-    </security:authentication-manager>
-    -->
-
     <!-- Other requests are handled by the older HTTP Basic Authentication -->
     <security:http create-session="never">
         <security:http-basic/>
         <security:intercept-url pattern="/**" access="ROLE_LMS_USER"/>
     </security:http>
+
 
     <!-- Authentication manager -->
     <security:authentication-manager alias="authenticationManager">

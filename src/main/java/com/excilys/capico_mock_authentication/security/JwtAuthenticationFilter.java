@@ -1,6 +1,8 @@
 package com.excilys.capico_mock_authentication.security;
 
-import com.excilys.capico_mock_authentication.exception.JwtTokenMissingException;
+import com.excilys.capico_mock_authentication.exception.JwtExpiredException;
+import com.excilys.capico_mock_authentication.exception.JwtTokenMalformedException;
+import com.excilys.capico_mock_authentication.service.BlackListedTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -16,10 +18,11 @@ import java.io.IOException;
  * The entry point of our JWT Authentication protected pages
  */
 public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
-    private static final String HEADER_NAME = "Authorization", HEADER_START = "Bearer ";
 
     @Autowired
     private JwtUtil jwtUtil;
+    @Autowired
+    private BlackListedTokenService blackListedTokenService;
 
     public JwtAuthenticationFilter() {
         super("/**");
@@ -27,18 +30,19 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        // Extracts the JWT token from the request headers
-        String header = request.getHeader(HEADER_NAME);
-        if (header == null || !header.startsWith(HEADER_START)) {
-            throw new JwtTokenMissingException("No JWT token found in request headers");
+        String authToken = jwtUtil.extractStringTokenFromRequest(request);
+
+        // Verify that the token is not in the black list (after a blackList)
+        if (blackListedTokenService.isBlackListed(authToken)) {
+            throw new JwtExpiredException("The token has expired");
         }
-        String authToken = header.substring(HEADER_START.length());
 
         // Parse and return the token
-        return  jwtUtil.parseToken(authToken);
-
-        /* If we want spring security to always check the user's validity in DB:
-                return getAuthenticationManager().authenticate(authRequest); */
+        try {
+            return jwtUtil.parseToken(authToken);
+        } catch (Exception e) {
+            throw new JwtTokenMalformedException(e.getMessage());
+        }
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.excilys.capico_mock_authentication.security;
 
 import com.excilys.capico_mock_authentication.exception.JwtTokenMalformedException;
+import com.excilys.capico_mock_authentication.exception.JwtTokenMissingException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -10,6 +11,7 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -19,6 +21,7 @@ public class JwtUtil {
     // TODO : Take the secret from a file, and use : @Value("${jwt.secret}")
     private static String secret = "capico4evur";
 
+    private static final String HEADER_NAME = "Authorization", HEADER_START = "Bearer ";
     private static final String TAG_AUTHORITIES = "r";
     private final static int TOKEN_DURATION_IN_HOUR = 3;
 
@@ -72,5 +75,15 @@ public class JwtUtil {
         }
 
         return new JwtAuthenticationToken(username, authorities);
+    }
+
+    /** Extract the JSON Web Token from the request packet */
+    public String extractStringTokenFromRequest(HttpServletRequest request) throws JwtTokenMissingException {
+        // Extracts the JWT token from the request headers
+        String header = request.getHeader(HEADER_NAME);
+        if (header == null || !header.startsWith(HEADER_START)) {
+            throw new JwtTokenMissingException("No JWT token found in request headers");
+        }
+        return header.substring(HEADER_START.length());
     }
 }
